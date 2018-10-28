@@ -1,16 +1,15 @@
 #!/usr/bin/env python2
 
 
-class Parser(object):
-    def __init__(self, config_path=None, config_dict=None):
-        self.config_path = config_path
+class Scan125(object):
+    def __init__(self, config_dict=None):
         self.config = config_dict or dict()
 
-    def parse(self):
-        with file(self.config_path, 'rb') as f:
-            self._parse_text(f.readlines())
+    def load(self, config_path):
+        with file(config_path, 'rb') as f:
+            self.loads(f.readlines())
 
-    def _parse_text(self, config):
+    def loads(self, config):
         for line in config:
             if line[:3] == '%s%s%s' % (chr(0xEF), chr(0xBB), chr(0xBF)):
                 line = line[3:]  # cut off byte order mark
@@ -46,9 +45,13 @@ class Parser(object):
             else:
                 self.config[k] = v.split(',') if ',' in v else v
 
+    def dumps(self):
+        pass
+
 
 if __name__ == '__main__':
-    parser = Parser(config_path='scan125_config.txt')
-    parser.parse()
+    parser = Scan125()
+    parser.load('scan125_config.txt')
     from pprint import pprint
+
     pprint(parser.config)
