@@ -4,7 +4,46 @@
 
 class Scan125(object):
     def __init__(self, config_dict=None):
-        self.config = config_dict or dict()
+        if config_dict is None:
+            self.config = {'CNT': '8',
+                           'BTV': '!2.60V',
+                           'VER': '!2.5.0.0',
+                           'MDL': 'UBC125XLT',
+                           'SCG': '0111111110',
+                           'VOL': '6',
+                           'BLT': 'KY',
+                           'BSV': '14',
+                           'SQL': '4',
+                           'BPL': '1',
+                           'CSG': '1111101101',
+                           'SSG': '1101111###',
+                           'PRI': '0',
+                           'SCO': ['4', '1'],
+                           'KBP': ['99', '0'],
+                           'CLC': ['2', '0', '1', '001010', '1'],
+                           'CSP': {1: {'max': 279999, 'min': 250000},
+                                   2: {'max': 301999, 'min': 280000},
+                                   3: {'max': 499999, 'min': 302000},
+                                   4: {'max': 880000, 'min': 500000},
+                                   5: {'max': 1369999, 'min': 1080000},
+                                   6: {'max': 1439999, 'min': 1370000},
+                                   7: {'max': 1740000, 'min': 1440000},
+                                   8: {'max': 3999999, 'min': 2250000},
+                                   9: {'max': 5120000, 'min': 4000000},
+                                   10: {'max': 9600000, 'min': 8060000}},
+                           'CBN': {x: [''] for x in range(1, 11)},
+                           'SBN': {x: [''] for x in range(1, 11)},
+                           'CIN': {x: {'ctcss': 0,
+                                       'freq': 0,
+                                       'mod': 'AUTO',
+                                       'name': '',
+                                       'unk1': 2,
+                                       'unk2': 1,
+                                       'unk3': 0}
+                                   for x in range(1, 501)},
+                           }
+        else:
+            self.config = config_dict
 
     def load(self, config_path):
         with file(config_path, 'rb') as f:
@@ -12,7 +51,7 @@ class Scan125(object):
 
     def loads(self, config):
         for line in config.split('\n'):
-            if line[:3] == '%s%s%s' % (chr(0xEF), chr(0xBB), chr(0xBF)):
+            if line[:3] == '{}{}{}'.format(chr(0xEF), chr(0xBB), chr(0xBF)):
                 line = line[3:]  # cut off byte order mark
             line = line.strip()
             if not line or line.startswith('!') or line[3] != '=':
@@ -80,7 +119,7 @@ class Scan125(object):
 
 if __name__ == '__main__':
     parser = Scan125()
-    parser.load('tests/scan125_config.txt')
+    parser.load('../tests/scan125_config.txt')
     from pprint import pprint
 
     pprint(parser.config)
