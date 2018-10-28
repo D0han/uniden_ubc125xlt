@@ -19,4 +19,5 @@ class TestScan125(object):
         with file('tests/scan125_config.txt', 'rb') as f:
             config = f.read()
         p.loads(config)
-        assert p.dumps() == config
+        our_config = p.dumps().replace('! Generated with uniden_ubc125xlt package by D0han\n', '')
+        assert our_config == config

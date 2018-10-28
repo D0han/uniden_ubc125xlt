@@ -51,6 +51,7 @@ class Scan125(object):
 ! Scan125 Control Program © Nick Bailey 2013-2018 V2.5.0.0   http://www.nick-bailey.co.uk    
 ! Comments added to this file will be removed!
 ! PLEASE DO NOT EDIT OR MESS WITH THIS FILE
+! Generated with uniden_ubc125xlt package by D0han
 '''
         order = ['MDL', 'VER', 'VOL', 'SQL', 'CNT', 'BLT', 'BSV', 'BTV', 'KBP', 'BPL',
                  'PRI', 'CLC', 'SCO', 'SSG', 'SCG', 'CIN', 'CSG', 'CSP', 'SBN', 'CBN']
@@ -58,13 +59,28 @@ class Scan125(object):
             v = self.config[k]
             if type(v) is list:
                 v = ','.join((str(x) for x in v))
-            config += '%s=%s\n' % (k, v)
+            elif k == 'CSP':
+                for k2, v2 in v.iteritems():
+                    config += 'CSP={:02d},{:08d},{:08d}\n'.format(k2, v2['min'], v2['max'])
+                continue
+            elif k == 'CIN':
+                for k2, v2 in v.iteritems():
+                    name = '{:16}'.format(v2['name']) if v2['name'] else ' '
+                    config += 'CIN={:03d},{},{:08d},{},{},{},{},{}\n'.format(k2, name, v2['freq'],
+                                                                             v2['mod'], v2['ctcss'], v2['unk1'],
+                                                                             v2['unk2'], v2['unk3'])
+                continue
+            elif k in ('SBN', 'CBN'):
+                for k2, v2 in v.iteritems():
+                    config += '{}={:02d},{}\n'.format(k, k2, v2[0])
+                continue
+            config += '{}={}\n'.format(k, v)
         return config
 
 
 if __name__ == '__main__':
     parser = Scan125()
-    parser.load('scan125_config.txt')
+    parser.load('tests/scan125_config.txt')
     from pprint import pprint
 
     pprint(parser.config)
