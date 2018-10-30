@@ -3,29 +3,30 @@
 import StringIO
 import csv
 
-CONFIG = {0: {'Comment': '',
-              'DVCODE': '',
-              'DtcsCode': '023',
-              'DtcsPolarity': 'NN',
-              'Duplex': '',
-              'Frequency': '446.193750',
-              'Location': '0',
-              'Mode': 'NFM',
-              'Name': 'PMR16',
-              'Offset': '0.000000',
-              'RPT1CALL': '',
-              'RPT2CALL': '',
-              'Skip': 'S',
-              'TStep': '5.00',
-              'Tone': '',
-              'URCALL': '',
-              'cToneFreq': '88.5',
-              'rToneFreq': '88.5'}, }
-
 
 class ConfigParser(object):
     def __init__(self, config_dict=None):
-        self.config = {} if config_dict is None else config_dict
+        if config_dict is None:
+            self.config = {0: {'Comment': '',
+                               'DVCODE': '',
+                               'DtcsCode': '023',
+                               'DtcsPolarity': 'NN',
+                               'Duplex': '',
+                               'Frequency': '446.193750',
+                               'Location': '0',
+                               'Mode': 'NFM',
+                               'Name': 'PMR16',
+                               'Offset': '0.000000',
+                               'RPT1CALL': '',
+                               'RPT2CALL': '',
+                               'Skip': 'S',
+                               'TStep': '5.00',
+                               'Tone': '',
+                               'URCALL': '',
+                               'cToneFreq': '88.5',
+                               'rToneFreq': '88.5'}, }
+        else:
+            self.config = config_dict
 
     def load(self, config_path):
         with file(config_path, 'rb') as f:
